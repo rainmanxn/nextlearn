@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import {MainLayout} from "../components/MainLayout";
 import axios from 'axios';
 import { useState, useEffect } from 'react'
@@ -21,7 +22,14 @@ console.log(posts)
           <title>Posts page</title>
         </Head>
         <h1 className='post'>Post page</h1>
-        <pre>{JSON.stringify(posts, null, 2)}</pre>
+        <ul>
+          {posts.map(post => (
+            <li key={post.id}>
+              <Link href={`/post/[id]`} as={`/post/${post.id}`}>{post.title}</Link>
+            </li>
+          ))}
+        </ul>
+        {/*<pre>{JSON.stringify(posts, null, 2)}</pre>*/}
       </MainLayout>
     )
 }
