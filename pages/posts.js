@@ -4,7 +4,7 @@ import {MainLayout} from "../components/MainLayout";
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 
-const Posts = ({ posts }) => {
+const Posts = ({ posts: serverPosts }) => {
   // const [posts, setPosts] = useState([])
   // const fnReq = async () => {
   //   const res = await axios('http://localhost:4200/posts')
@@ -15,7 +15,23 @@ const Posts = ({ posts }) => {
   // useEffect(() => {
   //   fnReq()
   // }, [])
-console.log(posts)
+  const [posts, setPost] = useState(serverPosts)
+
+  useEffect(() => {
+    const load = async () => {
+      let response = await axios('http://localhost:4200/posts')
+      response = response.data
+      setPost(response)
+    }
+    if (!serverPosts) load()
+  }, [])
+
+  if (!posts) {
+    return <MainLayout>
+      <p>...loading</p>
+    </MainLayout>
+  }
+
     return (
       <MainLayout title='posts page'>
         <Head>
@@ -34,7 +50,8 @@ console.log(posts)
     )
 }
 
-Posts.getInitialProps = async () => {
+Posts.getInitialProps = async ({ req }) => {
+  if (!req) return {posts: null}
   const post = await axios('http://localhost:4200/posts')
   const posts = post.data
   return {
